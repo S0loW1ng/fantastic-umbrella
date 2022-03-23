@@ -1,20 +1,23 @@
-#include "helteck.h" // WLAN Lib
-#define BAND 915E6; //Parameter definitions
+#include <heltec.h>
+#define BAND 915E6 //Parameter definitions
 String rssi = "RSSI --";
 String packSize = "--";
 String packet;
 
-#include <DHT.h> // Temp Sensor Lib
-#define DHTPIN 2 // Parameter Deffinitions
-#define DHTTYPE DHT11
-DHT dht(DHTPIN, DHTTYPE);
+long randNumber;
+float flrandNumber;
+
+//#include <DHT.h> // Temp Sensor Lib
+//#define DHTPIN 2 // Parameter Deffinitions
+//#define DHTTYPE DHT11
+//DHT dht(DHTPIN, DHTTYPE);
 
 //Global variables
 float temperature = 99.99;
 
 void setup() {
   
-  Serial.begin(9600)
+  Serial.begin(9600);
 
   Heltec.begin(true /*DisplayEnable Enable*/ , true /*Heltec.Heltec.Heltec.LoRa Disable*/ , true /*Serial Enable*/ , true /*PABOOST Enable*/ , BAND /*long BAND*/ );
   Heltec.display -> init();
@@ -27,19 +30,22 @@ void setup() {
   delay(1000);
   Heltec.display -> clear();
 
+ randomSeed(56);
 }
 
 void loop() {
   getReadings();
-  displayReadings()
+  displayReadings();
   sendPacket("Temperature:" + String(temperature) + " C");
-  delay(100)
+  delay(100);
 
 }
 
 void getReadings() {
 
-  temperature = dht.readTemperature();
+  randNumber = random(2200, 2299);
+  flrandNumber = (float)randNumber / 100.00;
+  temperature =flrandNumber;
   Serial.printf("Temperature: %f \n", temperature);
   delay(50);
 
@@ -63,6 +69,6 @@ void sendPacket(String str) {
   LoRa.setTxPower(14, RF_PACONFIG_PASELECT_PABOOST); //RF_PACONFIG_PASELECT_PABOOST -- LoRa single output via PABOOST, maximum output 20dBm
   LoRa.print(str);
   LoRa.endPacket();
-  delay(50);
+  delay(3500);
 
 }
