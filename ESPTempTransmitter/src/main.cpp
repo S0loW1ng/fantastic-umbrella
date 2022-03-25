@@ -21,9 +21,10 @@ float temperatureC;
 
 void setup() {
   Serial.begin(115200);
-  delay(100);
+  Serial.setTimeout(2000);
+  while (!Serial) {}
 
-  temperatureSensor.setWaitForConversion(false);
+  temperatureSensor.setWaitForConversion(true);
   temperatureSensor.begin();
 
   WiFi.mode(WIFI_STA);
@@ -60,5 +61,6 @@ void loop() {
   }
 
   // Wait 20 seconds to update the channel again
-  delay(20000);
+  Serial.println("Deep sleeping for 20 seconds.");
+  ESP.deepSleep(20e6);
 }
